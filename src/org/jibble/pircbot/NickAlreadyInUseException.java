@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright Paul James Mutton, 2001-2009, http://www.jibble.org/
 
 This file is part of PircBot.
@@ -25,7 +25,7 @@ package org.jibble.pircbot;
  * @version    1.5.0 (Build time: Mon Dec 14 20:07:17 2009)
  */
 public class NickAlreadyInUseException extends IrcException {
-    
+
     /**
      * Constructs a new IrcException.
      *
@@ -34,5 +34,5 @@ public class NickAlreadyInUseException extends IrcException {
     public NickAlreadyInUseException(String e) {
         super(e);
     }
-    
+
 }

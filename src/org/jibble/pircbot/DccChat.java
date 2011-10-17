@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright Paul James Mutton, 2001-2009, http://www.jibble.org/
 
 This file is part of PircBot.
@@ -26,18 +26,18 @@ import java.io.*;
  * @version    1.5.0 (Build time: Mon Dec 14 20:07:17 2009)
  */
 public class DccChat {
-    
-    
+
+
     /**
      * This constructor is used when we are accepting a DCC CHAT request
      * from somebody. It attempts to connect to the client that issued the
      * request.
-     * 
+     *
      * @param bot An instance of the underlying PircBot.
      * @param sourceNick The nick of the sender.
      * @param address The address to connect to.
      * @param port The port number to connect to.
-     * 
+     *
      * @throws IOException If the connection cannot be made.
      */
     DccChat(PircBot bot, String nick, String login, String hostname, long address, int port) {
@@ -49,17 +49,17 @@ public class DccChat {
         _hostname = hostname;
         _acceptable = true;
     }
-    
-    
+
+
     /**
      * This constructor is used after we have issued a DCC CHAT request to
      * somebody. If the client accepts the chat request, then the socket we
      * obtain is passed to this constructor.
-     * 
+     *
      * @param bot An instance of the underlying PircBot.
      * @param sourceNick The nick of the user we are sending the request to.
      * @param socket The socket which will be used for the DCC CHAT session.
-     * 
+     *
      * @throws IOException If the socket cannot be read from.
      */
     DccChat(PircBot bot, String nick, Socket socket) throws IOException {
@@ -70,13 +70,13 @@ public class DccChat {
         _writer = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream()));
         _acceptable = false;
     }
-    
-    
+
+
     /**
      * Accept this DccChat connection.
-     * 
+     *
      * @since 1.2.0
-     * 
+     *
      */
     public synchronized void accept() throws IOException {
         if (_acceptable) {
@@ -85,11 +85,11 @@ public class DccChat {
             String ipStr = ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
             _socket = new Socket(ipStr, _port);
             _reader = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
-            _writer = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream()));            
+            _writer = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream()));
         }
     }
-    
-    
+
+
     /**
      * Reads the next line of text from the client at the other end of our DCC Chat
      * connection.  This method blocks until something can be returned.
@@ -97,7 +97,7 @@ public class DccChat {
      *
      * @return The next line of text from the client.  Returns null if the
      *          connection has closed normally.
-     * 
+     *
      * @throws IOException If an I/O error occurs.
      */
     public String readLine() throws IOException {
@@ -106,15 +106,15 @@ public class DccChat {
         }
         return _reader.readLine();
     }
-    
-    
+
+
     /**
      * Sends a line of text to the client at the other end of our DCC Chat
      * connection.
-     * 
+     *
      * @param line The line of text to be sent.  This should not include
      *             linefeed characters.
-     * 
+     *
      * @throws IOException If an I/O error occurs.
      */
     public void sendLine(String line) throws IOException {
@@ -125,11 +125,11 @@ public class DccChat {
         _writer.write(line + "\r\n");
         _writer.flush();
     }
-    
-    
+
+
     /**
      * Closes the DCC Chat connection.
-     * 
+     *
      * @throws IOException If an I/O error occurs.
      */
     public void close() throws IOException {
@@ -138,13 +138,13 @@ public class DccChat {
         }
         _socket.close();
     }
-    
-    
+
+
     /**
      * Returns the nick of the other user taking part in this file transfer.
-     * 
+     *
      * @return the nick of the other user.
-     * 
+     *
      */
     public String getNick() {
         return _nick;
@@ -153,9 +153,9 @@ public class DccChat {
 
     /**
      * Returns the login of the DCC Chat initiator.
-     * 
+     *
      * @return the login of the DCC Chat initiator. null if we sent it.
-     * 
+     *
      */
     public String getLogin() {
         return _login;
@@ -164,18 +164,18 @@ public class DccChat {
 
     /**
      * Returns the hostname of the DCC Chat initiator.
-     * 
+     *
      * @return the hostname of the DCC Chat initiator. null if we sent it.
-     * 
+     *
      */
     public String getHostname() {
         return _hostname;
     }
-    
-    
+
+
     /**
      * Returns the BufferedReader used by this DCC Chat.
-     * 
+     *
      * @return the BufferedReader used by this DCC Chat.
      */
     public BufferedReader getBufferedReader() {
@@ -185,24 +185,24 @@ public class DccChat {
 
     /**
      * Returns the BufferedReader used by this DCC Chat.
-     * 
+     *
      * @return the BufferedReader used by this DCC Chat.
      */
     public BufferedWriter getBufferedWriter() {
         return _writer;
     }
-    
-    
+
+
     /**
      * Returns the raw Socket used by this DCC Chat.
-     * 
+     *
      * @return the raw Socket used by this DCC Chat.
      */
     public Socket getSocket() {
         return _socket;
     }
-    
-    
+
+
     /**
      * Returns the address of the sender as a long.
      *
@@ -212,7 +212,7 @@ public class DccChat {
         return _address;
     }
 
-    
+
     private PircBot _bot;
     private String _nick;
     private String _login = null;
@@ -223,5 +223,5 @@ public class DccChat {
     private boolean _acceptable;
     private long _address = 0;
     private int _port = 0;
-    
+
 }

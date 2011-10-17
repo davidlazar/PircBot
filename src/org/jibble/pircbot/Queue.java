@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright Paul James Mutton, 2001-2009, http://www.jibble.org/
 
 This file is part of PircBot.
@@ -29,22 +29,22 @@ import java.util.Vector;
  * mobile appliances.  This means replacing the LinkedList with
  * a Vector, which is hardly ideal, but this Queue is typically
  * only polled every second before dispatching messages.
- * 
+ *
  * @author  Paul James Mutton,
  *          <a href="http://www.jibble.org/">http://www.jibble.org/</a>
  * @version    1.5.0 (Build time: Mon Dec 14 20:07:17 2009)
  */
 public class Queue {
-    
+
 
     /**
      * Constructs a Queue object of unlimited size.
      */
     public Queue() {
-        
+
     }
-    
-    
+
+
     /**
      * Adds an Object to the end of the Queue.
      *
@@ -56,11 +56,11 @@ public class Queue {
             _queue.notify();
         }
     }
-    
-    
+
+
     /**
      * Adds an Object to the front of the Queue.
-     * 
+     *
      * @param o The Object to be added to the Queue.
      */
     public void addFront(Object o) {
@@ -69,8 +69,8 @@ public class Queue {
             _queue.notify();
         }
     }
-    
-    
+
+
     /**
      * Returns the Object at the front of the Queue.  This
      * Object is then removed from the Queue.  If the Queue
@@ -80,9 +80,9 @@ public class Queue {
      * @return The next item from the front of the queue.
      */
     public Object next() {
-        
+
         Object o = null;
-        
+
         // Block if the Queue is empty.
         synchronized(_queue) {
             if (_queue.size() == 0) {
@@ -93,7 +93,7 @@ public class Queue {
                     return null;
                 }
             }
-        
+
             // Return the Object.
             try {
                 o = _queue.firstElement();
@@ -106,8 +106,8 @@ public class Queue {
 
         return o;
     }
-    
-    
+
+
     /**
      * Returns true if the Queue is not empty.  If another
      * Thread empties the Queue before <b>next()</b> is
@@ -119,8 +119,8 @@ public class Queue {
     public boolean hasNext() {
         return (this.size() != 0);
     }
-    
-    
+
+
     /**
      * Clears the contents of the Queue.
      */
@@ -129,8 +129,8 @@ public class Queue {
             _queue.removeAllElements();
         }
     }
-    
-    
+
+
     /**
      * Returns the size of the Queue.
      *
@@ -139,8 +139,8 @@ public class Queue {
     public int size() {
         return _queue.size();
     }
-    
+
 
     private Vector _queue = new Vector();
-    
+
 }

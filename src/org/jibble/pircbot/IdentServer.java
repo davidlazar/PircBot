@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright Paul James Mutton, 2001-2009, http://www.jibble.org/
 
 This file is part of PircBot.
@@ -42,7 +42,7 @@ import java.io.*;
  * @version    1.5.0 (Build time: Mon Dec 14 20:07:17 2009)
  */
 public class IdentServer extends Thread {
-    
+
     /**
      * Constructs and starts an instance of an IdentServer that will
      * respond to a client with the provided login.  Rather than calling
@@ -68,13 +68,13 @@ public class IdentServer extends Thread {
             _bot.log("*** Could not start the ident server on port 113.");
             return;
         }
-        
+
         _bot.log("*** Ident server running on port 113 for the next 60 seconds...");
         this.setName(this.getClass() + "-Thread");
         this.start();
     }
-    
-    
+
+
     /**
      * Waits for a client to connect to the ident server before making an
      * appropriate response.  Note that this method is started by the class
@@ -84,10 +84,10 @@ public class IdentServer extends Thread {
         try {
             Socket socket = _ss.accept();
             socket.setSoTimeout(60000);
-            
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            
+
             String line = reader.readLine();
             if (line != null) {
                 _bot.log("*** Ident request received: " + line);
@@ -101,19 +101,19 @@ public class IdentServer extends Thread {
         catch (Exception e) {
             // We're not really concerned with what went wrong, are we?
         }
-        
+
         try {
             _ss.close();
         }
         catch (Exception e) {
             // Doesn't really matter...
         }
-        
+
         _bot.log("*** The Ident server has been shut down.");
     }
-    
+
     private PircBot _bot;
     private String _login;
     private ServerSocket _ss = null;
-    
+
 }

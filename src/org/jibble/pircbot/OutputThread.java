@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright Paul James Mutton, 2001-2009, http://www.jibble.org/
 
 This file is part of PircBot.
@@ -29,14 +29,14 @@ import java.net.*;
  * @version    1.5.0 (Build time: Mon Dec 14 20:07:17 2009)
  */
 public class OutputThread extends Thread {
-    
-    
+
+
     /**
      * Constructs an OutputThread for the underlying PircBot.  All messages
      * sent to the IRC server are sent by this OutputThread to avoid hammering
      * the server.  Messages are sent immediately if possible.  If there are
      * multiple messages queued, then there is a delay imposed.
-     * 
+     *
      * @param bot The underlying PircBot instance.
      * @param outQueue The Queue from which we will obtain our messages.
      */
@@ -45,12 +45,12 @@ public class OutputThread extends Thread {
         _outQueue = outQueue;
         this.setName(this.getClass() + "-Thread");
     }
-    
-    
+
+
     /**
      * A static method to write a line to a BufferedOutputStream and then pass
      * the line to the log method of the supplied PircBot instance.
-     * 
+     *
      * @param bot The underlying PircBot instance.
      * @param out The BufferedOutputStream to write to.
      * @param line The line to be written. "\r\n" is appended to the end.
@@ -72,8 +72,8 @@ public class OutputThread extends Thread {
             }
         }
     }
-    
-    
+
+
     /**
      * This method starts the Thread consuming from the outgoing message
      * Queue and sending lines to the server.
@@ -84,7 +84,7 @@ public class OutputThread extends Thread {
             while (running) {
                 // Small delay to prevent spamming of the channel
                 Thread.sleep(_bot.getMessageDelay());
-                
+
                 String line = (String) _outQueue.next();
                 if (line != null) {
                     _bot.sendRawLine(line);
@@ -98,8 +98,8 @@ public class OutputThread extends Thread {
             // Just let the method return naturally...
         }
     }
-    
+
     private PircBot _bot = null;
     private Queue _outQueue = null;
-    
+
 }
