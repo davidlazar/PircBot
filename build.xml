@@ -1,0 +1,26 @@
+<project name="pircbot" default="dist">
+  <description>
+    Build the PircBot IRC Framework
+  </description>
+
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="dist" location="dist"/>
+
+  <target name="build" description="Build PircBot">
+    <mkdir dir="${build}"/>
+    <javac fork="true" srcdir="${src}" destdir="${build}">
+    </javac>
+  </target>
+
+  <target name="dist" depends="build" description="Create PircBot distribution (pircbot.jar)">
+    <mkdir dir="${dist}/lib"/>
+    <jar jarfile="${dist}/lib/pircbot.jar" basedir="${build}"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+</project>
