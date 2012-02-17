@@ -88,7 +88,8 @@ public abstract class PircBot implements ReplyConstants {
      * @throws NickAlreadyInUseException if our nick is already in use on the server.
      */
     public final synchronized void connect(String hostname) throws IOException, IrcException, NickAlreadyInUseException {
-        this.connect(hostname, 6667, null);
+        ConnectionSettings cs = new ConnectionSettings(hostname);
+        this.connect(cs);
     }
 
 
@@ -104,7 +105,9 @@ public abstract class PircBot implements ReplyConstants {
      * @throws NickAlreadyInUseException if our nick is already in use on the server.
      */
     public final synchronized void connect(String hostname, int port) throws IOException, IrcException, NickAlreadyInUseException {
-        this.connect(hostname, port, null);
+        ConnectionSettings cs = new ConnectionSettings(hostname);
+        cs.port = port;
+        this.connect(cs);
     }
 
 
@@ -122,10 +125,29 @@ public abstract class PircBot implements ReplyConstants {
      * @throws NickAlreadyInUseException if our nick is already in use on the server.
      */
     public final synchronized void connect(String hostname, int port, String password) throws IOException, IrcException, NickAlreadyInUseException {
+        ConnectionSettings cs = new ConnectionSettings(hostname);
+        cs.port = port;
+        cs.password = password;
+        this.connect(cs);
+    }
 
-        _server = hostname;
-        _port = port;
-        _password = password;
+
+    /**
+     * Attempt to connect to an IRC server using the supplied
+     * connection settings.
+     * The onConnect method is called upon success.
+     *
+     * @param cs The connection settings to use.
+     *
+     * @throws IOException if it was not possible to connect to the server.
+     * @throws IrcException if the server would not let us join it.
+     * @throws NickAlreadyInUseException if our nick is already in use on the server.
+     */
+    public final synchronized void connect(ConnectionSettings cs) throws IOException, IrcException, NickAlreadyInUseException {
+
+        _server = cs.server;
+        _port = cs.port;
+        _password = cs.password;
 
         if (isConnected()) {
             throw new IOException("The PircBot is already connected to an IRC server.  Disconnect first.");
@@ -137,7 +159,7 @@ public abstract class PircBot implements ReplyConstants {
         this.removeAllChannels();
 
         // Connect to the server.
-        Socket socket =  new Socket(hostname, port);
+        Socket socket = new Socket(_server, _port);
         this.log("*** Connected to server.");
 
         _inetAddress = socket.getLocalAddress();
@@ -159,8 +181,8 @@ public abstract class PircBot implements ReplyConstants {
         BufferedWriter bwriter = new BufferedWriter(outputStreamWriter);
 
         // Attempt to join the server.
-        if (password != null && !password.equals("")) {
-            OutputThread.sendRawLine(this, bwriter, "PASS " + password);
+        if (_password != null && !_password.equals("")) {
+            OutputThread.sendRawLine(this, bwriter, "PASS " + _password);
         }
         String nick = this.getName();
         OutputThread.sendRawLine(this, bwriter, "NICK " + nick);
