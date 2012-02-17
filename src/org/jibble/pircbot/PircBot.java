@@ -164,7 +164,8 @@ public abstract class PircBot implements ReplyConstants {
         }
         String nick = this.getName();
         OutputThread.sendRawLine(this, bwriter, "NICK " + nick);
-        OutputThread.sendRawLine(this, bwriter, "USER " + this.getLogin() + " 8 * :" + this.getVersion());
+        // http://tools.ietf.org/html/rfc2812#section-3.1.3
+        OutputThread.sendRawLine(this, bwriter, "USER " + this.getUserName() + " 8 * :" + this.getRealName());
 
         _inputThread = new InputThread(this, socket, breader, bwriter);
 
@@ -2371,9 +2372,32 @@ public abstract class PircBot implements ReplyConstants {
      * any servers.
      *
      * @param login The new login of the Bot.
+     * @deprecated As of version 1.6, replaced by {@link #setUserName}
      */
-    protected final void setLogin(String login) {
-        _login = login;
+    @Deprecated protected final void setLogin(String login) {
+        _username = login;
+    }
+
+
+    /**
+     * Sets the internal username of the Bot.  This should be set before
+     * joining any servers.
+     *
+     * @param username The new username of the Bot.
+     */
+    protected final void setUserName(String username) {
+        _username = username;
+    }
+
+
+    /**
+     * Sets the internal realname of the Bot.  This should be set before
+     * joining any servers.
+     *
+     * @param realname The new realname of the Bot.
+     */
+    protected final void setRealName(String realname) {
+        _realname = realname;
     }
 
 
@@ -2431,9 +2455,30 @@ public abstract class PircBot implements ReplyConstants {
      * Gets the internal login of the PircBot.
      *
      * @return The login of the PircBot.
+     * @deprecated As of version 1.6, replaced by {@link #getUserName()}
      */
-    public final String getLogin() {
-        return _login;
+    @Deprecated public final String getLogin() {
+        return _username;
+    }
+
+
+    /**
+     * Gets the internal username of the PircBot.
+     *
+     * @return The username of the PircBot.
+     */
+    public final String getUserName() {
+        return _username;
+    }
+
+
+    /**
+     * Gets the internal realname of the PircBot.
+     *
+     * @return The realname of the PircBot.
+     */
+    public final String getRealName() {
+        return _realname;
     }
 
 
@@ -3087,7 +3132,8 @@ public abstract class PircBot implements ReplyConstants {
     private boolean _verbose = false;
     private String _name = "PircBot";
     private String _nick = _name;
-    private String _login = "PircBot";
+    private String _username = "PircBot";
+    private String _realname = "PircBot";
     private String _version = "PircBot " + VERSION + " Java IRC Bot - www.jibble.org";
     private String _finger = "You ought to be arrested for fingering a bot!";
 
