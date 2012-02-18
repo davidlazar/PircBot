@@ -15,7 +15,7 @@ PircBot' can be installed by typing:
 
 This makes the PircBot' library available to projects that depend on it through Ivy. The library can also be used via the resulting `build/artifacts/pircbot.jar` file.
 
-For general documentation on using PircBot' once it's installed, see the [jibble.org PircBot website](http://www.jibble.org/pircbot.php). See [ReminderBot](https://github.com/davidlazar/ReminderBot) for an example of how to use the new features provided by PircBot'.
+For general documentation on using PircBot' once it's installed, see the [jibble.org PircBot website](http://www.jibble.org/pircbot.php). See [ReminderBot'](https://github.com/davidlazar/ReminderBot) for an example of how to use the new features provided by PircBot'.
 
 # Contributing
 
