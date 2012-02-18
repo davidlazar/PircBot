@@ -17,6 +17,8 @@ package org.jibble.pircbot;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.net.*;
+import javax.net.ssl.*;
 
 /**
  * PircBot is a Java framework for writing IRC bots quickly and easily.
@@ -148,6 +150,7 @@ public abstract class PircBot implements ReplyConstants {
         _server = cs.server;
         _port = cs.port;
         _password = cs.password;
+        _useSSL = cs.useSSL;
 
         if (isConnected()) {
             throw new IOException("The PircBot is already connected to an IRC server.  Disconnect first.");
@@ -159,7 +162,24 @@ public abstract class PircBot implements ReplyConstants {
         this.removeAllChannels();
 
         // Connect to the server.
-        Socket socket = new Socket(_server, _port);
+        Socket socket;
+        if (_useSSL) {
+            try {
+                SocketFactory factory;
+                if (cs.verifySSL) {
+                    factory = SSLSocketFactory.getDefault();
+                } else {
+                    SSLContext sc = UnverifiedSSL.getUnverifiedSSLContext();
+                    factory = sc.getSocketFactory();
+                }
+                socket = factory.createSocket(_server, _port);
+            } catch (Exception e) {
+                throw new IOException("SSL failure");
+            }
+        } else {
+            socket = new Socket(_server, _port);
+        }
+
         this.log("*** Connected to server.");
 
         _inetAddress = socket.getLocalAddress();
@@ -2627,6 +2647,9 @@ public abstract class PircBot implements ReplyConstants {
         return _port;
     }
 
+    public final boolean useSSL() {
+        return _useSSL;
+    }
 
     /**
      * Returns the last password that we used when connecting to an IRC server.
@@ -3131,6 +3154,7 @@ public abstract class PircBot implements ReplyConstants {
     private String _server = null;
     private int _port = -1;
     private String _password = null;
+    private boolean _useSSL = false;
 
     // Outgoing message stuff.
     private Queue _outQueue = new Queue();

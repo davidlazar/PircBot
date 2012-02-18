@@ -49,6 +49,14 @@ public abstract class ConfigurablePircBot extends PircBot {
                 cs.password = c.getString("Password");
             }
 
+            if (c.containsKey("SSL")) {
+                cs.useSSL = c.getBoolean("SSL");
+            }
+
+            if (c.containsKey("VerifySSL")) {
+                cs.verifySSL = c.getBoolean("VerifySSL");
+            }
+
             connect(cs);
 
             if (c.containsKey("Channels")) {
