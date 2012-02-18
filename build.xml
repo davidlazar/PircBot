@@ -1,26 +1,71 @@
-<project name="pircbot" default="dist">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="pircbot" default="publish">
   <description>
     Build the PircBot IRC Framework
   </description>
 
-  <property name="src" location="src"/>
-  <property name="build" location="build"/>
-  <property name="dist" location="dist"/>
+  <property name="pircbot.version" value="1.6"/>
 
-  <target name="build" description="Build PircBot">
-    <mkdir dir="${build}"/>
-    <javac fork="true" srcdir="${src}" destdir="${build}">
+  <property name="src.dir" location="src"/>
+  <property name="build.dir" location="build"/>
+  <property name="classes.dir" location="${build.dir}/classes"/>
+  <property name="artifacts.dir" location="${build.dir}/artifacts"/>
+  <property name="reports.dir" location="${build.dir}/reports"/>
+
+  <property name="ivy.install.version" value="2.2.0"/>
+  <property name="ivy.jar.dir" value="${user.home}/.ant/lib"/>
+  <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+  <property name="ivy.lib.dir" value="${build.dir}/lib"/>
+  <!-- <property name="ivy.local.default.root" location="${user.home}/.ivy2/local"/>-->
+
+  <path id="lib.path">
+    <fileset dir="${ivy.lib.dir}"/>
+  </path>
+
+  <!-- download-ivy and init-ivy targets taken from Ivy tutorials/examples -->
+  <target name="download-ivy" unless="offline">
+    <mkdir dir="${ivy.jar.dir}"/>
+    <!-- download Ivy from the web -->
+    <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+         dest="${ivy.jar.file}" usetimestamp="true"/>
+  </target>
+
+  <target name="init-ivy" depends="download-ivy">
+    <path id="ivy.lib.path">
+        <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    </path>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml"
+             uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+  </target>
+
+  <target name="resolve" depends="init-ivy" description="--> retrieve dependencies with ivy">
+    <ivy:retrieve/>
+  </target>
+
+  <target name="report" depends="resolve" description="--> generate a report of dependencies">
+    <ivy:report todir="${reports.dir}"/>
+  </target>
+
+  <target name="build" depends="resolve" description="--> build PircBot">
+    <mkdir dir="${classes.dir}"/>
+    <javac fork="true" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="lib.path">
     </javac>
   </target>
 
-  <target name="dist" depends="build" description="Create PircBot distribution (pircbot.jar)">
-    <mkdir dir="${dist}/lib"/>
-    <jar jarfile="${dist}/lib/pircbot.jar" basedir="${build}"/>
+  <target name="jar" depends="build" description="--> create pircbot.jar">
+    <jar jarfile="${artifacts.dir}/pircbot.jar" basedir="${classes.dir}"/>
   </target>
 
-  <target name="clean">
-    <delete dir="${build}"/>
-    <delete dir="${dist}"/>
+  <target name="publish" depends="jar" description="--> publish PircBot in the Ivy cache">
+    <ivy:publish pubrevision="${pircbot.version}" resolver="local" overwrite="true">
+      <artifacts pattern="${artifacts.dir}/[artifact].[ext]"/>
+    </ivy:publish>
   </target>
 
+  <target name="clean" description="--> delete the build directory">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-cache" description="--> clean the ivy cache">
+    <ivy:cleancache/>
+  </target>
 </project>

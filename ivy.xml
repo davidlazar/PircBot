@@ -1,0 +1,9 @@
+<ivy-module version="2.2">
+    <info organisation="org.jibble" module="pircbot"/>
+    <publications>
+        <artifact name="pircbot" type="jar"/>
+    </publications>
+    <dependencies>
+        <dependency org="commons-configuration" name="commons-configuration" rev="1.8"/>
+    </dependencies>
+</ivy-module>
