@@ -10,4 +10,13 @@ public class ConnectionSettings {
     public ConnectionSettings(String server) {
         this.server = server;
     }
+
+    public ConnectionSettings clone() {
+        ConnectionSettings cs = new ConnectionSettings(server);
+        cs.port = port;
+        cs.useSSL = useSSL;
+        cs.verifySSL = verifySSL;
+        cs.password = password;
+        return cs;
+    }
 }
