@@ -147,10 +147,8 @@ public abstract class PircBot implements ReplyConstants {
      */
     public final synchronized void connect(ConnectionSettings cs) throws IOException, IrcException, NickAlreadyInUseException {
 
-        _server = cs.server;
-        _port = cs.port;
-        _password = cs.password;
-        _useSSL = cs.useSSL;
+        ConnectionSettings _cs = cs.clone();
+        _connectionSettings = _cs;
 
         if (isConnected()) {
             throw new IOException("The PircBot is already connected to an IRC server.  Disconnect first.");
@@ -163,21 +161,21 @@ public abstract class PircBot implements ReplyConstants {
 
         // Connect to the server.
         Socket socket;
-        if (_useSSL) {
+        if (_cs.useSSL) {
             try {
                 SocketFactory factory;
-                if (cs.verifySSL) {
+                if (_cs.verifySSL) {
                     factory = SSLSocketFactory.getDefault();
                 } else {
                     SSLContext sc = UnverifiedSSL.getUnverifiedSSLContext();
                     factory = sc.getSocketFactory();
                 }
-                socket = factory.createSocket(_server, _port);
+                socket = factory.createSocket(_cs.server, _cs.port);
             } catch (Exception e) {
                 throw new IOException("SSL failure");
             }
         } else {
-            socket = new Socket(_server, _port);
+            socket = new Socket(_cs.server, _cs.port);
         }
 
         this.log("*** Connected to server.");
@@ -201,8 +199,8 @@ public abstract class PircBot implements ReplyConstants {
         BufferedWriter bwriter = new BufferedWriter(outputStreamWriter);
 
         // Attempt to join the server.
-        if (_password != null && !_password.equals("")) {
-            OutputThread.sendRawLine(this, bwriter, "PASS " + _password);
+        if (_cs.password != null && !_cs.password.equals("")) {
+            OutputThread.sendRawLine(this, bwriter, "PASS " + _cs.password);
         }
         String nick = this.getName();
         OutputThread.sendRawLine(this, bwriter, "NICK " + nick);
@@ -288,7 +286,7 @@ public abstract class PircBot implements ReplyConstants {
         if (getServer() == null) {
             throw new IrcException("Cannot reconnect to an IRC server because we were never connected to one previously!");
         }
-        connect(getServer(), getPort(), getPassword());
+        connect(_connectionSettings);
     }
 
 
@@ -2626,7 +2624,9 @@ public abstract class PircBot implements ReplyConstants {
      *         null if no connection attempts have ever been made.
      */
     public final String getServer() {
-        return _server;
+        if (_connectionSettings == null)
+            return null;
+        return _connectionSettings.server;
     }
 
 
@@ -2644,11 +2644,24 @@ public abstract class PircBot implements ReplyConstants {
      *         Returns -1 if no connection attempts have ever been made.
      */
     public final int getPort() {
-        return _port;
+        if (_connectionSettings == null)
+            return -1;
+        return _connectionSettings.port;
     }
 
+    /**
+     * Returns whether PircBot used SSL with the last IRC server that
+     * it tried to connect to.
+     *
+     * @since PircBot 1.6
+     *
+     * @return Whether SSL was used in the last connection attempt.
+     *         Returns false if no connection attempts have ever been made.
+     */
     public final boolean useSSL() {
-        return _useSSL;
+        if (_connectionSettings == null)
+            return false;
+        return _connectionSettings.useSSL;
     }
 
     /**
@@ -2664,7 +2677,9 @@ public abstract class PircBot implements ReplyConstants {
      *         Returns null if we have not previously connected using a password.
      */
     public final String getPassword() {
-        return _password;
+        if (_connectionSettings == null)
+            return null;
+        return _connectionSettings.password;
     }
 
 
@@ -2894,11 +2909,11 @@ public abstract class PircBot implements ReplyConstants {
      * @return a String representation of this object.
      */
     public String toString() {
-        return "Version{" + _version + "}" +
+        return "Version{" + getVersion() + "}" +
                 " Connected{" + isConnected() + "}" +
-                " Server{" + _server + "}" +
-                " Port{" + _port + "}" +
-                " Password{" + _password + "}";
+                " Server{" + getServer() + "}" +
+                " Port{" + getPort() + "}" +
+                " Password{" + getPassword() + "}";
     }
 
 
@@ -3151,10 +3166,7 @@ public abstract class PircBot implements ReplyConstants {
     private InetAddress _inetAddress = null;
 
     // Details about the last server that we connected to.
-    private String _server = null;
-    private int _port = -1;
-    private String _password = null;
-    private boolean _useSSL = false;
+    private ConnectionSettings _connectionSettings = null;
 
     // Outgoing message stuff.
     private Queue _outQueue = new Queue();
