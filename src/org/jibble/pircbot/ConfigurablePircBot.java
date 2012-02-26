@@ -4,6 +4,11 @@ import java.io.*;
 import org.apache.commons.configuration.*;
 
 public abstract class ConfigurablePircBot extends PircBot {
+    private Configuration configuration;
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
 
     public void initBot(File file) throws Exception {
         initBot(new PropertiesConfiguration(file));
@@ -14,6 +19,8 @@ public abstract class ConfigurablePircBot extends PircBot {
     }
 
     public void initBot(Configuration c) throws Exception {
+        this.configuration = c;
+
         if (c.containsKey("Verbose")) {
             setVerbose(c.getBoolean("Verbose"));
         }
