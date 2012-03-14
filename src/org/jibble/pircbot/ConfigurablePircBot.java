@@ -10,12 +10,15 @@ public abstract class ConfigurablePircBot extends PircBot {
         return configuration;
     }
 
-    public void initBot(File file) throws Exception {
-        initBot(new PropertiesConfiguration(file));
+    public void initBot(String fileName) throws Exception {
+        initBot(new File(fileName));
     }
 
-    public void initBot(String fileName) throws Exception {
-        initBot(new PropertiesConfiguration(fileName));
+    public void initBot(File file) throws Exception {
+        PropertiesConfiguration c = new PropertiesConfiguration();
+        c.setDelimiterParsingDisabled(true);
+        c.load(file);
+        initBot(c);
     }
 
     public void initBot(Configuration c) throws Exception {
