@@ -10,6 +10,7 @@
   <property name="classes.dir" location="${build.dir}/classes"/>
   <property name="artifacts.dir" location="${build.dir}/artifacts"/>
   <property name="reports.dir" location="${build.dir}/reports"/>
+  <property name="docs.dir" location="${build.dir}/docs"/>
 
   <property name="ivy.install.version" value="2.2.0"/>
   <property name="ivy.jar.dir" value="${user.home}/.ant/lib"/>
@@ -59,6 +60,10 @@
     <ivy:publish pubrevision="${pircbot.version}" resolver="local" overwrite="true">
       <artifacts pattern="${artifacts.dir}/[artifact].[ext]"/>
     </ivy:publish>
+  </target>
+
+  <target name="docs" description="--> generate PircBot API docs">
+    <javadoc sourcepath="${src.dir}" destdir="${docs.dir}" linksource="yes"/>
   </target>
 
   <target name="clean" description="--> delete the build directory">
