@@ -1,3 +1,6 @@
+/*
+Author: David Lazar
+*/
 package org.jibble.pircbot;
 
 import javax.net.ssl.*;

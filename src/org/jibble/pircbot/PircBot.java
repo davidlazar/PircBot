@@ -9,6 +9,7 @@ Since the GPL may be too restrictive for use in a proprietary application,
 a commercial license is also provided. Full license information can be
 found at http://www.jibble.org/licenses/
 
+Modifications from PircBot 1.5 by David Lazar.
 */
 
 
